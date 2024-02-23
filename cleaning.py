@@ -5,11 +5,12 @@ from sklearn.impute import KNNImputer
 
 # read in data
 df = pd.read_csv('uber_lyft_file.zip')
+df = df.loc[df['name'].str.lower().str.strip() != 'taxi']  #taxi rides don't include price
 
 # drop certain columns
 df = df.drop(['id', 'timestamp', 'datetime', 'timezone', 'product_id', 'latitude', 'longitude', 
               'long_summary', 'windGustTime', 'temperatureHighTime', 'temperatureLowTime',
-              'apparentTemperatureHighTime', 'apparentTemperatureLowTime', 'icon', 'sunriseTime',
+              'apparentTemperatureHighTime', 'apparentTemperatureLowTime', 'icon', 'visibility.1', 'sunriseTime',
               'sunsetTime', 'uvIndexTime', 'temperatureMinTime', 'temperatureMaxTime',
               'apparentTemperatureMinTime', 'apparentTemperatureMaxTime'],
              axis=1)
@@ -19,23 +20,28 @@ ohe_columns = ['source', 'destination', 'cab_type', 'name', 'short_summary']
 for col in ohe_columns:
     df.loc[:, col] = df[col].str.lower().str.strip()  #adjust column values to be lower case and w/o whitespace
 
-df = df.rename(columns={'short_summary': 'weather',
-                        'visibility.1': 'visibility'})  #short_summary doesn't make as much sense; remove ".1" from visibility
+df = df.rename(columns={'short_summary': 'weather'})  #short_summary doesn't make as much sense; remove ".1" from visibility
 df = pd.get_dummies(df, columns=['source', 'destination', 'cab_type', 'name', 'weather'], dtype=int)  #ohe variable
 
 # rename columns to be lowercase and not have spaces
 for i in range(0, len(df.columns)):
     df = df.rename(columns={df.columns[i]: df.columns[i].strip().lower().replace(" ", "_")})
 
-# ensure column names are good
+# ensure column names are good and no null values
 print(df.info())
 
-# 55,095 rows have price as empty
-imputer = KNNImputer(n_neighbors=5)
-df = pd.DataFrame(imputer.fit_transform(df), columns = df.columns)
+counts = {}
+for name in df.columns:
+    num = counts.get(name, 0)
+    counts[name] = num + 1
+    if counts[name] > 1:
+        print(name)
 
-# check to see if price has 693071 non-null values
-# print(df.info())
+lyft_df = df.loc[df['cab_type_lyft'] == 1]
+lyft_df.to_parquet("data/lyft/lyft_full_data.parquet")
+
+uber_df = df.loc[df['cab_type_uber'] == 1]
+uber_df.to_parquet("data/uber/uber_full_data.parquet")
 
 """
 Notes:
@@ -66,11 +72,12 @@ Columns that we can drop:
     12. `apparentTemperatureHighTime`: weird time of weather??
     13. `apparentTemperatureLowTime`: weird time of weather??
     14. `icon`: same as short_summary
-    15. `sunriseTime`: shouldn't matter
-    16. `sunsetTime`: shouldn't matter
-    17. `uvIndexTime`: shouldn't matter
-    18. `temperatureMinTime`: shouldn't matter
-    19. `temperatureMaxTime`: shouldn't matter
-    20. `apparentTemperatureMinTime`: shouldn't matter
-    21. `apparentTemperatureMaxTime`: shouldn't matter
+    15. `visibility.1`: same as visibility
+    16. `sunriseTime`: shouldn't matter
+    17. `sunsetTime`: shouldn't matter
+    18. `uvIndexTime`: shouldn't matter
+    19. `temperatureMinTime`: shouldn't matter
+    20. `temperatureMaxTime`: shouldn't matter
+    21. `apparentTemperatureMinTime`: shouldn't matter
+    22. `apparentTemperatureMaxTime`: shouldn't matter
 """
