@@ -1,7 +1,4 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.impute import KNNImputer
 
 # read in data
 df = pd.read_csv('uber_lyft_file.zip')
@@ -20,7 +17,7 @@ ohe_columns = ['source', 'destination', 'cab_type', 'name', 'short_summary']
 for col in ohe_columns:
     df.loc[:, col] = df[col].str.lower().str.strip()  #adjust column values to be lower case and w/o whitespace
 
-df = df.rename(columns={'short_summary': 'weather'})  #short_summary doesn't make as much sense; remove ".1" from visibility
+df = df.rename(columns={'short_summary': 'weather'})  #short_summary doesn't make as much sense
 df = pd.get_dummies(df, columns=['source', 'destination', 'cab_type', 'name', 'weather'], dtype=int)  #ohe variable
 
 # rename columns to be lowercase and not have spaces
@@ -30,13 +27,7 @@ for i in range(0, len(df.columns)):
 # ensure column names are good and no null values
 print(df.info())
 
-counts = {}
-for name in df.columns:
-    num = counts.get(name, 0)
-    counts[name] = num + 1
-    if counts[name] > 1:
-        print(name)
-
+# write data to parquet files (one for lyft, one for uber)
 lyft_df = df.loc[df['cab_type_lyft'] == 1]
 lyft_df.to_parquet("data/lyft/lyft_full_data.parquet")
 
@@ -46,6 +37,7 @@ uber_df.to_parquet("data/uber/uber_full_data.parquet")
 """
 Notes:
     - Appears that all rides occur in 2018
+    - When `name` is 'taxi', price is missing so we filter them out
 
 Columns that we should OHE:
     1. `source`: beginning location of ride
