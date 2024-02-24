@@ -44,7 +44,7 @@ def fit_NN(train_x, train_y, test_x, test_y, company, save_model=False):
                   optimizer="adam",
                   metrics=["mse", "mae"])
     batch_size = 64
-    epochs = 30
+    epochs = 25
 
     history = model.fit(train_x,
                         train_y,
@@ -74,7 +74,7 @@ def fit_NN(train_x, train_y, test_x, test_y, company, save_model=False):
     print('RMSE: ', round(np.sqrt(mse),4 ))
     
     if save_model:
-        filename = f'models/{company.lower()}_deep_models/{company.lower()}_neural_net'
+        filename = f'models/{company.lower()}_deep_models/{company.lower()}_neural_net.keras'
         model.save(filename)
     
     return model
@@ -99,7 +99,7 @@ def fit_DNN(train_x, train_y, test_x, test_y, company, save_model=False):
                   optimizer="adam",
                   metrics=["mse", "mae"])
     batch_size = 64
-    epochs = 30
+    epochs = 25
 
     history = model.fit(train_x,
                         train_y,
@@ -129,7 +129,7 @@ def fit_DNN(train_x, train_y, test_x, test_y, company, save_model=False):
     print('RMSE: ', round(np.sqrt(mse),4 ))
     
     if save_model:
-        filename = f'models/{company.lower()}_deep_models/{company.lower()}_deep_neural_net'
+        filename = f'models/{company.lower()}_deep_models/{company.lower()}_deep_neural_net.keras'
         model.save(filename)
     
     return model
