@@ -18,20 +18,20 @@ for col in ohe_columns:
     df.loc[:, col] = df[col].str.lower().str.strip()  #adjust column values to be lower case and w/o whitespace
 
 df = df.rename(columns={'short_summary': 'weather'})  #short_summary doesn't make as much sense
-df = pd.get_dummies(df, columns=['source', 'destination', 'cab_type', 'name', 'weather'], dtype=int)  #ohe variable
+df_full = pd.get_dummies(df, columns=['source', 'destination', 'cab_type', 'name', 'weather'], dtype=int)  #ohe variable
 
 # rename columns to be lowercase and not have spaces
-for i in range(0, len(df.columns)):
-    df = df.rename(columns={df.columns[i]: df.columns[i].strip().lower().replace(" ", "_")})
+for i in range(0, len(df_full.columns)):
+    df_full = df_full.rename(columns={df_full.columns[i]: df_full.columns[i].strip().lower().replace(" ", "_")})
 
 # ensure column names are good and no null values
-print(df.info())
+print(df_full.info())
 
 # write data to parquet files (one for lyft, one for uber)
-lyft_df = df.loc[df['cab_type_lyft'] == 1]
+lyft_df = df_full.loc[df_full['cab_type_lyft'] == 1]
 lyft_df.to_parquet("data/lyft/lyft_full_data.parquet")
 
-uber_df = df.loc[df['cab_type_uber'] == 1]
+uber_df = df_full.loc[df_full['cab_type_uber'] == 1]
 uber_df.to_parquet("data/uber/uber_full_data.parquet")
 
 """
