@@ -124,125 +124,128 @@ if check_prices:
     surge_multiplier = 1
     temp_df = data.loc[(data['hour'] == int(start_time.strftime("%H"))) &
                         (data['month'] == month_options[month])]
-    temperature = temp_df[['temperature']].mean().values[0]
-    apparentTemperature = temp_df[['apparentTemperature']].mean().values[0]
-    precipIntensity = temp_df[['precipIntensity']].mean().values[0]
-    precipProbability = temp_df[['precipProbability']].mean().values[0]
-    humidity = temp_df[['humidity']].mean().values[0]
-    windSpeed = temp_df[['windSpeed']].mean().values[0]
-    windGust = temp_df[['windGust']].mean().values[0]
-    visibility = temp_df[['visibility']].mean().values[0]
-    temperatureHigh = temp_df[['temperatureHigh']].mean().values[0]
-    temperatureLow = temp_df[['temperatureLow']].mean().values[0]
-    apparentTemperatureHigh = temp_df[['apparentTemperatureHigh']].mean().values[0]
-    apparentTemperatureLow = temp_df[['apparentTemperatureLow']].mean().values[0]
+    temperature = temp_df[['temperature']].median().values[0]
+    apparentTemperature = temp_df[['apparentTemperature']].median().values[0]
+    precipIntensity = temp_df[['precipIntensity']].median().values[0]
+    precipProbability = temp_df[['precipProbability']].median().values[0]
+    humidity = temp_df[['humidity']].median().values[0]
+    windSpeed = temp_df[['windSpeed']].median().values[0]
+    windGust = temp_df[['windGust']].median().values[0]
+    visibility = temp_df[['visibility']].median().values[0]
+    temperatureHigh = temp_df[['temperatureHigh']].median().values[0]
+    temperatureLow = temp_df[['temperatureLow']].median().values[0]
+    apparentTemperatureHigh = temp_df[['apparentTemperatureHigh']].median().values[0]
+    apparentTemperatureLow = temp_df[['apparentTemperatureLow']].median().values[0]
 
-    dewPoint = temp_df[['dewPoint']].mean().values[0]
-    pressure = temp_df[['pressure']].mean().values[0]
-    windBearing = temp_df[['windBearing']].mean().values[0]
-    cloudCover = temp_df[['cloudCover']].mean().values[0]
-    uvIndex = temp_df[['uvIndex']].mean().values[0]
-    ozone = temp_df[['ozone']].mean().values[0]
-    moonPhase = temp_df[['moonPhase']].mean().values[0]
-    precipIntensityMax = temp_df[['precipIntensityMax']].mean().values[0]
-    temperatureMin = temp_df[['temperatureMin']].mean().values[0]
-    temperatureMax = temp_df[['temperatureMax']].mean().values[0]
-    apparentTemperatureMin = temp_df[['apparentTemperatureMin']].mean().values[0]
-    apparentTemperatureMax = temp_df[['apparentTemperatureMax']].mean().values[0]
+    dewPoint = temp_df[['dewPoint']].median().values[0]
+    pressure = temp_df[['pressure']].median().values[0]
+    windBearing = temp_df[['windBearing']].median().values[0]
+    cloudCover = temp_df[['cloudCover']].median().values[0]
+    uvIndex = temp_df[['uvIndex']].median().values[0]
+    ozone = temp_df[['ozone']].median().values[0]
+    moonPhase = temp_df[['moonPhase']].median().values[0]
+    precipIntensityMax = temp_df[['precipIntensityMax']].median().values[0]
+    temperatureMin = temp_df[['temperatureMin']].median().values[0]
+    temperatureMax = temp_df[['temperatureMax']].median().values[0]
+    apparentTemperatureMin = temp_df[['apparentTemperatureMin']].median().values[0]
+    apparentTemperatureMax = temp_df[['apparentTemperatureMax']].median().values[0]
     print('Data loaded')
 
     cab_types = ['Lyft', 'Uber']
+    ordered_columns = [x for x in data_f.columns if x != "price"]
     input_data = []
     for cab in cab_types:
         data = {'hour': int(start_time.strftime("%H")),
-                    'day': int(current_day.strftime("%d")),
-                    'month': int(month_options[month]),
-                    'distance': float(distance),
-                    'surge_multiplier': float(surge_multiplier),
-                    'temperature': float(temperature),
-                    'apparenttemperature': float(apparentTemperature),
-                    'precipintensity': precipIntensity,
-                    'precipprobability': precipProbability,
-                    'humidity': humidity,
-                    'windspeed': windSpeed,
-                    'windgust': windGust,
-                    'visibility': visibility,
-                    'temperaturehigh': temperatureHigh,
-                    'temperaturelow': temperatureLow,
-                    'apparenttemperaturehigh': apparentTemperatureHigh,
-                    'apparenttemperaturelow': apparentTemperatureLow,
-                    'dewpoint': dewPoint,
-                    'pressure': pressure,
-                    'windbearing': windBearing,
-                    'cloudcover': cloudCover,
-                    'uvindex': uvIndex,
-                    'ozone': ozone,
-                    'moonphase': moonPhase,
-                    'precipintensitymax': precipIntensityMax,
-                    'temperaturemin': temperatureMin,
-                    'temperaturemax': temperatureMax,
-                    'apparenttemperaturemin': apparentTemperatureMin,
-                    'apparenttemperaturemax': apparentTemperatureMax,
-                    'source_back_bay': 1 if source == "Back Bay" else 0,
-                    'source_beacon_hill': 1 if source == "Beacon Hill" else 0,
-                    'source_boston_university': 1 if source == "Boston University" else 0,
-                    'source_fenway': 1 if source == "Fenway" else 0,
-                    'source_financial_district': 1 if source == "Financial District" else 0,
-                    'source_haymarket_square': 1 if source == "Haymarket Square" else 0,
-                    'source_north_end': 1 if source == "North End" else 0,
-                    'source_north_station': 1 if source == "North Station" else 0,
-                    'source_northeastern_university': 1 if source == "Northeastern University" else 0,
-                    'source_south_station': 1 if source == "South Station" else 0,
-                    'source_theatre_district': 1 if source == "Theatre District" else 0,
-                    'source_west_end': 1 if source == "West End" else 0,
-                    'destination_back_bay': 1 if destination == "Back Bay" else 0,
-                    'destination_beacon_hill': 1 if destination == "Beacon Hill" else 0,
-                    'destination_boston_university': 1 if destination == "Boston University" else 0,
-                    'destination_fenway': 1 if destination == "Fenway" else 0,
-                    'destination_financial_district': 1 if destination == "Financial District" else 0,
-                    'destination_haymarket_square': 1 if destination == "Haymarket Square" else 0,
-                    'destination_north_end': 1 if destination == "North End" else 0,
-                    'destination_north_station': 1 if destination == "North Station" else 0,
-                    'destination_northeastern_university': 1 if destination == "Northeastern University" else 0,
-                    'destination_south_station': 1 if destination == "South Station" else 0,
-                    'destination_theatre_district': 1 if destination == "Theatre District" else 0,
-                    'destination_west_end': 1 if destination == "West End" else 0,
-                    'cab_type_lyft': 1 if cab == 'Lyft' else 0,
-                    'cab_type_uber': 1 if cab == 'Uber' else 0,
-                    'name_black': 1 if (cab == 'Uber') and ('Standard Luxury' in name) else 0,
-                    'name_black_suv': 1 if (cab == 'Uber') and ('XL Luxury' in name) else 0,
-                    'name_lux': 1 if (cab == 'Lyft') and ('Standard Luxury' in name) else 0,
-                    'name_lux_black': 1 if (cab == 'Lyft') and ('Standard Luxury' in name) else 0,
-                    'name_lux_black_xl': 1 if (cab == 'Lyft') and ('XL Luxury' in name) else 0,
-                    'name_lyft': 1 if (cab == 'Lyft') and ('Standard' in name) else 0,
-                    'name_lyft_xl': 1 if (cab == 'Lyft') and ('XL' in name) else 0,
-                    'name_shared': 1 if (cab == 'Lyft') and ('Shared' in name) else 0,
-                    'name_uberpool': 1 if (cab == 'Uber') and ('Shared' in name) else 0,
-                    'name_uberx': 1 if (cab == 'Uber') and ('Standard' in name) else 0,
-                    'name_uberxl': 1 if (cab == 'Uber') and ('XL' in name) else 0,
-                    'name_wav': 1 if (cab == 'Uber') and ('Accessible' in name) else 0,
-                    'weather_clear': 1 if short_summary == 'Clear' else 0,
-                    'weather_drizzle': 1 if short_summary == 'Drizzle' else 0,
-                    'weather_foggy': 1 if short_summary == 'Foggy' else 0,
-                    'weather_light_rain': 1 if short_summary == 'Light Rain' else 0,
-                    'weather_mostly_cloudy': 1 if short_summary == 'Mostly Cloudy' else 0,
-                    'weather_overcast': 1 if short_summary == 'Overcast' else 0,
-                    'weather_partly_cloudy': 1 if short_summary == 'Partly Cloudy' else 0,
-                    'weather_possible_drizzle': 1 if short_summary == 'Possible Drizzle' else 0,
-                    'weather_rain': 1 if short_summary == 'Rain' else 0}
-        
-        input_data.append(data)
+                'day': int(current_day.strftime("%d")),
+                'month': int(month_options[month]),
+                'distance': float(distance),
+                'surge_multiplier': float(surge_multiplier),
+                'temperature': float(temperature),
+                'apparenttemperature': float(apparentTemperature),
+                'precipintensity': precipIntensity,
+                'precipprobability': precipProbability,
+                'humidity': humidity,
+                'windspeed': windSpeed,
+                'windgust': windGust,
+                'visibility': visibility,
+                'temperaturehigh': temperatureHigh,
+                'temperaturelow': temperatureLow,
+                'apparenttemperaturehigh': apparentTemperatureHigh,
+                'apparenttemperaturelow': apparentTemperatureLow,
+                'dewpoint': dewPoint,
+                'pressure': pressure,
+                'windbearing': windBearing,
+                'cloudcover': cloudCover,
+                'uvindex': uvIndex,
+                'ozone': ozone,
+                'moonphase': moonPhase,
+                'precipintensitymax': precipIntensityMax,
+                'temperaturemin': temperatureMin,
+                'temperaturemax': temperatureMax,
+                'apparenttemperaturemin': apparentTemperatureMin,
+                'apparenttemperaturemax': apparentTemperatureMax,
+                'source_back_bay': 1 if source == "Back Bay" else 0,
+                'source_beacon_hill': 1 if source == "Beacon Hill" else 0,
+                'source_boston_university': 1 if source == "Boston University" else 0,
+                'source_fenway': 1 if source == "Fenway" else 0,
+                'source_financial_district': 1 if source == "Financial District" else 0,
+                'source_haymarket_square': 1 if source == "Haymarket Square" else 0,
+                'source_north_end': 1 if source == "North End" else 0,
+                'source_north_station': 1 if source == "North Station" else 0,
+                'source_northeastern_university': 1 if source == "Northeastern University" else 0,
+                'source_south_station': 1 if source == "South Station" else 0,
+                'source_theatre_district': 1 if source == "Theatre District" else 0,
+                'source_west_end': 1 if source == "West End" else 0,
+                'destination_back_bay': 1 if destination == "Back Bay" else 0,
+                'destination_beacon_hill': 1 if destination == "Beacon Hill" else 0,
+                'destination_boston_university': 1 if destination == "Boston University" else 0,
+                'destination_fenway': 1 if destination == "Fenway" else 0,
+                'destination_financial_district': 1 if destination == "Financial District" else 0,
+                'destination_haymarket_square': 1 if destination == "Haymarket Square" else 0,
+                'destination_north_end': 1 if destination == "North End" else 0,
+                'destination_north_station': 1 if destination == "North Station" else 0,
+                'destination_northeastern_university': 1 if destination == "Northeastern University" else 0,
+                'destination_south_station': 1 if destination == "South Station" else 0,
+                'destination_theatre_district': 1 if destination == "Theatre District" else 0,
+                'destination_west_end': 1 if destination == "West End" else 0,
+                'cab_type_lyft': 1 if cab == 'Lyft' else 0,
+                'cab_type_uber': 1 if cab == 'Uber' else 0,
+                'name_black': 1 if (cab == 'Uber') and ('Standard Luxury' in name) else 0,
+                'name_black_suv': 1 if (cab == 'Uber') and ('XL Luxury' in name) else 0,
+                'name_lux': 1 if (cab == 'Lyft') and ('Standard Luxury' in name) else 0,
+                'name_lux_black': 1 if (cab == 'Lyft') and ('Standard Luxury' in name) else 0,
+                'name_lux_black_xl': 1 if (cab == 'Lyft') and ('XL Luxury' in name) else 0,
+                'name_lyft': 1 if (cab == 'Lyft') and ('Standard' in name) else 0,
+                'name_lyft_xl': 1 if (cab == 'Lyft') and ('XL' in name) else 0,
+                'name_shared': 1 if (cab == 'Lyft') and ('Shared' in name) else 0,
+                'name_uberpool': 1 if (cab == 'Uber') and ('Shared' in name) else 0,
+                'name_uberx': 1 if (cab == 'Uber') and ('Standard' in name) else 0,
+                'name_uberxl': 1 if (cab == 'Uber') and ('XL' in name) else 0,
+                'name_wav': 1 if (cab == 'Uber') and ('Accessible' in name) else 0,
+                'weather_clear': 1 if short_summary == 'Clear' else 0,
+                'weather_drizzle': 1 if short_summary == 'Drizzle' else 0,
+                'weather_foggy': 1 if short_summary == 'Foggy' else 0,
+                'weather_light_rain': 1 if short_summary == 'Light Rain' else 0,
+                'weather_mostly_cloudy': 1 if short_summary == 'Mostly Cloudy' else 0,
+                'weather_overcast': 1 if short_summary == 'Overcast' else 0,
+                'weather_partly_cloudy': 1 if short_summary == 'Partly Cloudy' else 0,
+                'weather_possible_drizzle': 1 if short_summary == 'Possible Drizzle' else 0,
+                'weather_rain': 1 if short_summary == 'Rain' else 0}
+        if cab == 'Lyft':
+            lyft_df = pd.DataFrame.from_records(data, index=[0])
+            lyft_df = lyft_df.loc[:, ordered_columns]
+        else:
+            uber_df = pd.DataFrame.from_records(data, index=[0])
+            uber_df = uber_df.loc[:, ordered_columns]
         
     print("\nLyft data loaded:")
-    print(len(input_data[0].keys()))
+    print(len(lyft_df.columns))
     print("\nUber data loaded:")
-    print(len(input_data[1].keys()))
+    print(len(uber_df.columns))
     
-    lyft_df = pd.DataFrame.from_records(input_data[0], index=[0])
     lyft_x = lyft_df.to_numpy()
     print(lyft_df[['cab_type_lyft', 'cab_type_uber']])
     
-    uber_df = pd.DataFrame.from_records(input_data[1], index=[0])
     uber_x = uber_df.to_numpy()
     print(uber_df[['cab_type_lyft', 'cab_type_uber']])
     
@@ -263,39 +266,78 @@ if check_prices:
         with ZipFile(model, 'r') as zip:
             zip.extractall()
     
-    lyft_models_obj = []
+    lyft_models_obj = {}
     for l_model in lyft_models:
-        if ".sav" in l_model:  #pickled model
-            try:
+        if os.path.exists(l_model):
+            if ".sav" in l_model:  #pickled model
                 model = pickle.load(open(l_model, 'rb'))
-            except:
-                print(f"couldn't load {l_model}")
-        else:  #keras model
-            model = keras.models.load_model('path/to/location.keras')
+            else:  #keras model
+                model = keras.models.load_model(l_model)
 
-        lyft_models_obj.append(model)
-        os.remove(l_model)
+            lyft_models_obj[l_model.split(".")[0]] = model
+            os.remove(l_model)
+        else:
+            print(f"{l_model} does not exist")
+    print(lyft_models_obj)
     
-    uber_models_obj = []
+    uber_models_obj = {}
     for u_model in uber_models:
         if os.path.exists(u_model):
             if ".sav" in u_model:  #pickled model
-                model = pickle.load(open(l_model, 'rb'))
+                model = pickle.load(open(u_model, 'rb'))
             else:  #keras model
-                model = keras.models.load_model('path/to/location.keras')
+                model = keras.models.load_model(u_model)
 
-            lyft_models_obj.append(model)     
+            uber_models_obj[u_model.split(".")[0]] = model
+            os.remove(u_model) 
         else:
             print(f"{u_model} does not exist")
+    print(uber_models_obj)
     
+    if os.path.exists("keep.txt"):
+        os.remove("keep.txt")
     
     #####
     
+    # Dataframes to make predictions on are `lyft_x` and `uber_x`
+    lyft_predictions = {}
+    for model in lyft_models_obj:
+        prediction = lyft_models_obj[model].predict(lyft_x)
+        try:
+            prediction = keras.backend.get_value(prediction)[0]
+        except:
+            pass
+        lyft_predictions[model] = prediction
+    lyft_pred_df = pd.DataFrame.from_dict(data=lyft_predictions,
+                                          orient='index').reset_index().rename(columns={'index': 'model'})
+    
+    uber_predictions = {}
+    for model in uber_models_obj:
+        prediction = uber_models_obj[model].predict(uber_x)
+        try:
+            prediction = keras.backend.get_value(prediction)[0]
+        except:
+            pass
+        uber_predictions[model] = prediction
+    uber_pred_df = pd.DataFrame.from_dict(data=uber_predictions,
+                                          orient='index').reset_index().rename(columns={'index': 'model'})
     
     lyft_col, uber_col = st.columns(2, gap="medium")
     lyft_col.header("Lyft Pricing:")
-    
-    
-    
+    edited_df = lyft_col.data_editor(lyft_pred_df,
+                                     hide_index=True,
+                                     use_container_width=True) 
     
     uber_col.header("Uber Pricing:")
+    edited_df = uber_col.data_editor(uber_pred_df,
+                                     hide_index=True,
+                                     use_container_width=True)
+    lyft_col.write("Lyft_df")
+    lyft_col.data_editor(lyft_df.T,
+                   hide_index=False,
+                   use_container_width=True)
+    
+    uber_col.write("Uber_df")
+    uber_col.data_editor(uber_df.T,
+                   hide_index=False,
+                   use_container_width=True)
