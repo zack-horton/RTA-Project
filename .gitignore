@@ -1,2 +1,14 @@
 rideshare_kaggle.csv
 .DS_Store
+models/lyft_reg_models/*
+models/lyft_tree_models/*
+models/lyft_deep_models/*
+models/uber_reg_models/*
+models/uber_tree_models/*
+models/uber_deep_models/*
+!models/lyft_reg_models
+!models/lyft_tree_models
+!models/lyft_deep_models
+!models/uber_reg_models
+!models/uber_tree_models
+!models/uber_deep_models
