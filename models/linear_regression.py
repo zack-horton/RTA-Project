@@ -36,7 +36,7 @@ def fit_ols_regression(train_x, train_y, test_x, test_y, company, save_model=Fal
     print('RMSE: ', round(np.sqrt(mse),4 ))
     
     if save_model:
-        filename = f'models/{company.lower()}/{company.lower()}_ols_regression.sav'
+        filename = f'models/{company.lower()}_reg_models/{company.lower()}_ols_regression.sav'
         pickle.dump(model, open(filename, 'wb'))
     
     return model
@@ -65,7 +65,7 @@ def fit_lasso_regression(train_x, train_y, test_x, test_y, company, save_model=F
     print('RMSE: ', round(np.sqrt(mse),4 ))
     
     if save_model:
-        filename = f'models/{company.lower()}/{company.lower()}_lasso_regression.sav'
+        filename = f'models/{company.lower()}_reg_models/{company.lower()}_lasso_regression.sav'
         pickle.dump(model, open(filename, 'wb'))
     
     return model
@@ -94,7 +94,7 @@ def fit_ridge_regression(train_x, train_y, test_x, test_y, company, save_model=F
     print('RMSE: ', round(np.sqrt(mse),4 ))
     
     if save_model:
-        filename = f'models/{company.lower()}/{company.lower()}_ridge_regression.sav'
+        filename = f'models/{company.lower()}_reg_models/{company.lower()}_ridge_regression.sav'
         pickle.dump(model, open(filename, 'wb'))
     
     return model

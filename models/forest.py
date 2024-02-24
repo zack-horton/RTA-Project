@@ -22,7 +22,7 @@ def fit_RF(train_x, train_y, test_x, test_y, company, save_model=False):
     grid_rf = grid_rf.fit(train_x, train_y)
 
     # y_train_pred = model.predict(train_x)
-    y_test_pred = model.predict(test_x)
+    y_test_pred = grid_rf.predict(test_x)
     
     # Test metrics
     explained_variance = metrics.explained_variance_score(test_y, y_test_pred)
@@ -42,11 +42,13 @@ def fit_RF(train_x, train_y, test_x, test_y, company, save_model=False):
     print('MSE: ', round(mse, 4))
     print('RMSE: ', round(np.sqrt(mse),4 ))
     
-    if save_model:
-        filename = f'models/{company.lower()}/{company.lower()}_randomforest.sav'
-        pickle.dump(grid_rf, open(filename, 'wb'))
+    model = grid_rf.best_estimator_
     
-    return grid_rf
+    if save_model:
+        filename = f'models/{company.lower()}_tree_models/{company.lower()}_randomforest.sav'
+        pickle.dump(model, open(filename, 'wb'))
+    
+    return model
     
 def fit_XGB(train_x, train_y, test_x, test_y, company, save_model=False):
     model = GradientBoostingRegressor(random_state=2024)
@@ -57,7 +59,7 @@ def fit_XGB(train_x, train_y, test_x, test_y, company, save_model=False):
     grid_xgb = grid_xgb.fit(train_x, train_y)
     
     # y_train_pred = model.predict(train_x)
-    y_test_pred = model.predict(test_x)
+    y_test_pred = grid_xgb.predict(test_x)
     
     # Test metrics
     explained_variance = metrics.explained_variance_score(test_y, y_test_pred)
@@ -77,11 +79,13 @@ def fit_XGB(train_x, train_y, test_x, test_y, company, save_model=False):
     print('MSE: ', round(mse, 4))
     print('RMSE: ', round(np.sqrt(mse),4 ))
     
-    if save_model:
-        filename = f'models/{company.lower()}/{company.lower()}_xgboost.sav'
-        pickle.dump(grid_xgb, open(filename, 'wb'))
+    model = grid_xgb.best_estimator_
     
-    return grid_xgb
+    if save_model:
+        filename = f'models/{company.lower()}_tree_models/{company.lower()}_xgboost.sav'
+        pickle.dump(model, open(filename, 'wb'))
+    
+    return model
 
 def fit_DT(train_x, train_y, test_x, test_y, company, save_model=False):
     model = DecisionTreeRegressor(random_state=2024)
@@ -89,11 +93,11 @@ def fit_DT(train_x, train_y, test_x, test_y, company, save_model=False):
                   'min_samples_leaf': [2, 4, 8, 16],
                   'ccp_alpha': [0.01]}
     
-    grid_dt = GridSearchCV(model, param_grid, cv=10, verbose=4)
+    grid_dt = GridSearchCV(model, param_grid, cv=5, verbose=4)
     grid_dt = grid_dt.fit(train_x, train_y)
     
     # y_train_pred = model.predict(train_x)
-    y_test_pred = model.predict(test_x)
+    y_test_pred = grid_dt.predict(test_x)
     
     # Test metrics
     explained_variance = metrics.explained_variance_score(test_y, y_test_pred)
@@ -113,9 +117,11 @@ def fit_DT(train_x, train_y, test_x, test_y, company, save_model=False):
     print('MSE: ', round(mse, 4))
     print('RMSE: ', round(np.sqrt(mse),4 ))
     
+    model = grid_dt.best_estimator_
+    
     if save_model:
-        filename = f'models/{company.lower()}/{company.lower()}_decision_tree.sav'
-        pickle.dump(grid_dt, open(filename, 'wb'))
+        filename = f'models/{company.lower()}_tree_models/{company.lower()}_decision_tree.sav'
+        pickle.dump(model, open(filename, 'wb'))
     
     return model
 
