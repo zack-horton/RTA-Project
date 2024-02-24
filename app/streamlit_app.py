@@ -110,9 +110,9 @@ short_summary = st.sidebar.selectbox(label="Current Weather",
                      index=0,
                      key="short_summary",
                      placeholder="-")
-name = st.sidebar.multiselect(label="Type of Ride",
+name = st.sidebar.selectbox(label="Type of Ride",
                        options=name_options.keys(),
-                       default="Standard")
+                       index=list(name_options.keys()).index("Standard"))
 
 check_prices = st.sidebar.button("Check Prices", type="primary", use_container_width=True)
 
@@ -210,18 +210,18 @@ if check_prices:
                 'destination_west_end': 1 if destination == "West End" else 0,
                 'cab_type_lyft': 1 if cab == 'Lyft' else 0,
                 'cab_type_uber': 1 if cab == 'Uber' else 0,
-                'name_black': 1 if (cab == 'Uber') and ('Standard Luxury' in name) else 0,
-                'name_black_suv': 1 if (cab == 'Uber') and ('XL Luxury' in name) else 0,
-                'name_lux': 1 if (cab == 'Lyft') and ('Standard Luxury' in name) else 0,
-                'name_lux_black': 1 if (cab == 'Lyft') and ('Standard Luxury' in name) else 0,
-                'name_lux_black_xl': 1 if (cab == 'Lyft') and ('XL Luxury' in name) else 0,
-                'name_lyft': 1 if (cab == 'Lyft') and ('Standard' in name) else 0,
-                'name_lyft_xl': 1 if (cab == 'Lyft') and ('XL' in name) else 0,
-                'name_shared': 1 if (cab == 'Lyft') and ('Shared' in name) else 0,
-                'name_uberpool': 1 if (cab == 'Uber') and ('Shared' in name) else 0,
-                'name_uberx': 1 if (cab == 'Uber') and ('Standard' in name) else 0,
-                'name_uberxl': 1 if (cab == 'Uber') and ('XL' in name) else 0,
-                'name_wav': 1 if (cab == 'Uber') and ('Accessible' in name) else 0,
+                'name_black': 1 if (cab == 'Uber') and ('Standard Luxury' == name) else 0,
+                'name_black_suv': 1 if (cab == 'Uber') and ('XL Luxury' == name) else 0,
+                'name_lux': 0,
+                'name_lux_black': 1 if (cab == 'Lyft') and ('Standard Luxury' == name) else 0,
+                'name_lux_black_xl': 1 if (cab == 'Lyft') and ('XL Luxury' == name) else 0,
+                'name_lyft': 1 if (cab == 'Lyft') and ('Standard' == name) else 0,
+                'name_lyft_xl': 1 if (cab == 'Lyft') and ('XL' == name) else 0,
+                'name_shared': 1 if (cab == 'Lyft') and ('Shared' == name) else 0,
+                'name_uberpool': 1 if (cab == 'Uber') and ('Shared' == name) else 0,
+                'name_uberx': 1 if (cab == 'Uber') and ('Standard' == name) else 0,
+                'name_uberxl': 1 if (cab == 'Uber') and ('XL' == name) else 0,
+                'name_wav': 1 if (cab == 'Uber') and ('Accessible' == name) else 0,
                 'weather_clear': 1 if short_summary == 'Clear' else 0,
                 'weather_drizzle': 1 if short_summary == 'Drizzle' else 0,
                 'weather_foggy': 1 if short_summary == 'Foggy' else 0,
@@ -273,8 +273,8 @@ if check_prices:
                 model = pickle.load(open(l_model, 'rb'))
             else:  #keras model
                 model = keras.models.load_model(l_model)
-
-            lyft_models_obj[l_model.split(".")[0]] = model
+            model_name = " ".join([x.capitalize() for x in l_model.split(".")[0].split("_")])
+            lyft_models_obj[model_name] = model
             os.remove(l_model)
         else:
             print(f"{l_model} does not exist")
@@ -287,8 +287,9 @@ if check_prices:
                 model = pickle.load(open(u_model, 'rb'))
             else:  #keras model
                 model = keras.models.load_model(u_model)
-
-            uber_models_obj[u_model.split(".")[0]] = model
+                
+            model_name = " ".join([x.capitalize() for x in u_model.split(".")[0].split("_")])
+            uber_models_obj[model_name] = model
             os.remove(u_model) 
         else:
             print(f"{u_model} does not exist")
@@ -302,42 +303,71 @@ if check_prices:
     # Dataframes to make predictions on are `lyft_x` and `uber_x`
     lyft_predictions = {}
     for model in lyft_models_obj:
-        prediction = lyft_models_obj[model].predict(lyft_x)
-        try:
-            prediction = keras.backend.get_value(prediction)[0]
-        except:
-            pass
+        prediction = f"${round(float(lyft_models_obj[model].predict(lyft_x)), ndigits=2)}"
         lyft_predictions[model] = prediction
     lyft_pred_df = pd.DataFrame.from_dict(data=lyft_predictions,
-                                          orient='index').reset_index().rename(columns={'index': 'model'})
+                                          orient='index').reset_index().rename(columns={'index': 'Model',
+                                                                                        0: 'Price'})
     
     uber_predictions = {}
     for model in uber_models_obj:
-        prediction = uber_models_obj[model].predict(uber_x)
-        try:
-            prediction = keras.backend.get_value(prediction)[0]
-        except:
-            pass
+        prediction = f"${round(float(uber_models_obj[model].predict(uber_x)), ndigits=2)}"
         uber_predictions[model] = prediction
     uber_pred_df = pd.DataFrame.from_dict(data=uber_predictions,
-                                          orient='index').reset_index().rename(columns={'index': 'model'})
+                                          orient='index').reset_index().rename(columns={'index': 'Model',
+                                                                                        0: 'Price'})
     
     lyft_col, uber_col = st.columns(2, gap="medium")
     lyft_col.header("Lyft Pricing:")
-    edited_df = lyft_col.data_editor(lyft_pred_df,
-                                     hide_index=True,
-                                     use_container_width=True) 
+    lyft_col.data_editor(lyft_pred_df.sort_values(by='Price', ascending=False),
+                        hide_index=True,
+                        use_container_width=True,
+                        disabled=lyft_pred_df.columns) 
     
+    lyft_pred_df_floats = lyft_pred_df.copy(deep=True)
+    lyft_pred_df_floats['Price'] = lyft_pred_df_floats['Price'].str.replace("$", "").astype(float)
+    lyft_pred_df_floats = lyft_pred_df_floats.sort_values(by='Price', ascending=True)
+    lyft_prices_plot = plt.figure()
+    plt.barh(y=lyft_pred_df_floats['Model'],
+            width=lyft_pred_df_floats['Price'])
+    plt.xlim(0, lyft_pred_df_floats['Price'].max() + 0.25)
+    plt.ylabel("Model")
+    plt.xlabel("Price ($)")
+    plt.title("Estimated Lyft Prices for Ride")
+    plt.tight_layout()
+    lyft_price_chart = lyft_col.pyplot(fig=lyft_prices_plot)
+
     uber_col.header("Uber Pricing:")
-    edited_df = uber_col.data_editor(uber_pred_df,
-                                     hide_index=True,
-                                     use_container_width=True)
-    lyft_col.write("Lyft_df")
-    lyft_col.data_editor(lyft_df.T,
-                   hide_index=False,
-                   use_container_width=True)
+    uber_col.data_editor(uber_pred_df.sort_values(by='Price', ascending=False),
+                        hide_index=True,
+                        use_container_width=True,
+                        disabled=uber_pred_df.columns)
     
-    uber_col.write("Uber_df")
-    uber_col.data_editor(uber_df.T,
-                   hide_index=False,
-                   use_container_width=True)
+    
+    uber_pred_df_floats = uber_pred_df.copy(deep=True)
+    uber_pred_df_floats['Price'] = uber_pred_df_floats['Price'].str.replace("$", "").astype(float)
+    uber_pred_df_floats = uber_pred_df_floats.sort_values(by='Price', ascending=True)
+    uber_prices_plot = plt.figure()
+    plt.barh(y=uber_pred_df_floats['Model'],
+            width=uber_pred_df_floats['Price'])
+    plt.xlim(0, uber_pred_df_floats['Price'].max() + 0.25)
+    plt.ylabel("Model")
+    plt.xlabel("Price ($)")
+    plt.title("Estimated Uber Prices for Ride")
+    plt.tight_layout()
+    uber_price_chart = uber_col.pyplot(fig=uber_prices_plot)
+
+    
+    lyft_col.write("Lyft Dataframe")
+    lyft_col.data_editor(lyft_df.T.reset_index().rename(columns={'index':'Column',
+                                                                  0: 'Value'}),
+                   hide_index=True,
+                   use_container_width=True,
+                   disabled=['Columns', 'Value'])
+    
+    uber_col.write("Uber Dataframe")
+    uber_col.data_editor(uber_df.T.reset_index().rename(columns={'index':'Column',
+                                                                  0: 'Value'}),
+                   hide_index=True,
+                   use_container_width=True,
+                   disabled=['Columns', 'Value'])
