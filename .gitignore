@@ -6,9 +6,9 @@ models/lyft_deep_models/*
 models/uber_reg_models/*
 models/uber_tree_models/*
 models/uber_deep_models/*
-!models/lyft_reg_models
-!models/lyft_tree_models
-!models/lyft_deep_models
-!models/uber_reg_models
-!models/uber_tree_models
-!models/uber_deep_models
+!models/lyft_reg_models/keep.txt
+!models/lyft_tree_models/keep.txt
+!models/lyft_deep_models/keep.txt
+!models/uber_reg_models/keep.txt
+!models/uber_tree_models/keep.txt
+!models/uber_deep_models/keep.txt
