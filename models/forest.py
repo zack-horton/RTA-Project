@@ -18,7 +18,7 @@ def fit_RF(train_x, train_y, test_x, test_y, company, save_model=False):
     param_grid = {'n_estimators': [64, 128, 256],
                   'max_depth': [4, 8, 16]}
     
-    grid_rf = GridSearchCV(model, param_grid, cv=10, verbose=4)
+    grid_rf = GridSearchCV(model, param_grid, cv=5, verbose=4)
     grid_rf = grid_rf.fit(train_x, train_y)
 
     # y_train_pred = model.predict(train_x)
@@ -55,7 +55,7 @@ def fit_XGB(train_x, train_y, test_x, test_y, company, save_model=False):
     param_grid = {'max_depth': [2, 4, 8],
                   'n_estimators': [64, 128, 256]}
     
-    grid_xgb = GridSearchCV(model, param_grid, cv=10, verbose=4)
+    grid_xgb = GridSearchCV(model, param_grid, cv=5, verbose=4)
     grid_xgb = grid_xgb.fit(train_x, train_y)
     
     # y_train_pred = model.predict(train_x)
@@ -128,7 +128,7 @@ def fit_DT(train_x, train_y, test_x, test_y, company, save_model=False):
 def fit_forest(train_x, train_y, test_x, test_y, company, save_model=False):
     train_y = train_y.ravel()
     test_y = test_y.ravel()
-    # fit_DT(train_x, train_y, test_x, test_y, company, save_model)
+    fit_DT(train_x, train_y, test_x, test_y, company, save_model)
     fit_XGB(train_x, train_y, test_x, test_y, company, save_model)
     fit_RF(train_x, train_y, test_x, test_y, company, save_model)
 
