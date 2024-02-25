@@ -137,8 +137,8 @@ def fit_DNN(train_x, train_y, test_x, test_y, company, save_model=False):
 def fit_neural(train_x, train_y, test_x, test_y, company, save_model=False):
     train_y = train_y.ravel()
     test_y = test_y.ravel()
-    fit_NN(train_x, train_y, test_x, test_y, company, save_model)
-    fit_DNN(train_x, train_y, test_x, test_y, company, save_model)
+    # fit_NN(train_x, train_y, test_x, test_y, company, save_model)
+    # fit_DNN(train_x, train_y, test_x, test_y, company, save_model)
 
 lyft_train_x, lyft_train_y, lyft_test_x, lyft_test_y = get_data('lyft')
 print("lyft train:", len(lyft_train_x), "lyft test:", len(lyft_test_x))

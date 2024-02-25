@@ -257,10 +257,10 @@ if check_prices:
                   'models/uber_reg_models.zip',
                   'models/uber_tree_models.zip']
     lyft_models = ['lyft_ols_regression.sav', 'lyft_ridge_regression.sav', 'lyft_lasso_regression.sav',
-                   'lyft_decision_tree.sav', 'lyft_random_forest.sav', 'lyft_xgboost.sav',
+                   'lyft_decision_tree.sav', 'lyft_randomforest.sav', 'lyft_xgboost.sav',
                    'lyft_neural_net.keras', 'lyft_deep_neural_net.keras']
     uber_models = ['uber_ols_regression.sav', 'uber_ridge_regression.sav', 'uber_lasso_regression.sav',
-                   'uber_decision_tree.sav', 'uber_random_forest.sav', 'uber_xgboost.sav',
+                   'uber_decision_tree.sav', 'uber_randomforest.sav', 'uber_xgboost.sav',
                    'uber_neural_net.keras', 'uber_deep_neural_net.keras']
     for model in model_zips:
         with ZipFile(model, 'r') as zip:
