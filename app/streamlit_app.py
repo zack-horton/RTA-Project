@@ -378,6 +378,6 @@ if page == "Riders":
                     hide_index=True,
                     use_container_width=True,
                     disabled=['Columns', 'Value'])
-else:
+else:  #if drivers is selected
     st.sidebar.title("Driver Information")
     
