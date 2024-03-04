@@ -12,7 +12,7 @@ from datetime import datetime
 ##### Init certain variables at the beginning #####
 data = pd.read_csv('uber_lyft_file.zip')
 data_f = pd.read_parquet('data/lyft/lyft_full_data.parquet')
-q_table_all = pd.read_csv("final_qtables.csv")    
+# q_table_all = pd.read_csv("final_qtables.csv")    
 
 now = datetime.now()
 current_hour = datetime.strptime(now.strftime("%H"), "%H")
@@ -61,31 +61,6 @@ name_options = {"Shared": {'Lyft': ['Shared'],
 month_options = {"November": 11,
                  "December": 12}
 ###################################################
-
-# Title
-st.title("Title")
-
-# Header (not bolded)
-st.header("Second line")
-
-# Markdown
-st.markdown("Hi there!")
-
-# Success
-st.success("Yay!, that was successful")
-
-# Failure
-st.error("Oops that was an error")
-
-# Warning
-st.warning("Warning, be aware")
-
-# Info
-st.info("Some info about the app")
-
-# Write
-a = 10
-st.write(a)
 
 page = st.sidebar.selectbox(label="Choose Page:",
                             options=["Riders", "Drivers"],
@@ -315,7 +290,7 @@ if page == "Riders":
             lyft_predictions[model] = prediction
         lyft_pred_df = pd.DataFrame.from_dict(data=lyft_predictions,
                                             orient='index').reset_index().rename(columns={'index': 'Model',
-                                                                                            0: 'Price'})
+                                                                                          0: 'Price'})
         
         uber_predictions = {}
         for model in uber_models_obj:
@@ -323,14 +298,10 @@ if page == "Riders":
             uber_predictions[model] = prediction
         uber_pred_df = pd.DataFrame.from_dict(data=uber_predictions,
                                             orient='index').reset_index().rename(columns={'index': 'Model',
-                                                                                            0: 'Price'})
+                                                                                          0: 'Price'})
         
-        lyft_col, uber_col = st.columns(2, gap="medium")
-        lyft_col.header("Lyft Pricing:")
-        lyft_col.data_editor(lyft_pred_df.sort_values(by='Price', ascending=False),
-                            hide_index=True,
-                            use_container_width=True,
-                            disabled=lyft_pred_df.columns) 
+        
+        
         
         lyft_pred_df_floats = lyft_pred_df.copy(deep=True)
         lyft_pred_df_floats['Price'] = lyft_pred_df_floats['Price'].str.replace("$", "").astype(float)
@@ -343,13 +314,10 @@ if page == "Riders":
         plt.xlabel("Price ($)")
         plt.title("Estimated Lyft Prices for Ride")
         plt.tight_layout()
-        lyft_price_chart = lyft_col.pyplot(fig=lyft_prices_plot)
+        
+        lyft_average_price = float(lyft_pred_df_floats[['Price']].mean().values[0])
 
-        uber_col.header("Uber Pricing:")
-        uber_col.data_editor(uber_pred_df.sort_values(by='Price', ascending=False),
-                            hide_index=True,
-                            use_container_width=True,
-                            disabled=uber_pred_df.columns)
+        
         
         
         uber_pred_df_floats = uber_pred_df.copy(deep=True)
@@ -363,9 +331,30 @@ if page == "Riders":
         plt.xlabel("Price ($)")
         plt.title("Estimated Uber Prices for Ride")
         plt.tight_layout()
-        uber_price_chart = uber_col.pyplot(fig=uber_prices_plot)
-
         
+        uber_average_price = float(uber_pred_df_floats[['Price']].mean().values[0])
+
+        if lyft_average_price <= uber_average_price:
+            best_company = "Lyft"
+            best_price = round(lyft_average_price, 2)
+            price_sd = round(float(lyft_pred_df_floats[['Price']].std().values[0]), 2)
+        else:
+            best_company = "Uber"
+            best_price = round(uber_average_price, 2)
+            price_sd = round(float(uber_pred_df_floats[['Price']].std().values[0]), 2)
+            
+        st.subheader(f"Based on our predictions, you should take {best_company} and it will cost ~${best_price} (+/- {price_sd})",
+                     divider='green')
+        
+        
+        lyft_col, uber_col = st.columns(2, gap="medium")
+        
+        lyft_col.header("Lyft Pricing:")
+        lyft_col.data_editor(lyft_pred_df.sort_values(by='Price', ascending=False),
+                            hide_index=True,
+                            use_container_width=True,
+                            disabled=lyft_pred_df.columns) 
+        lyft_price_chart = lyft_col.pyplot(fig=lyft_prices_plot)
         lyft_col.write("Lyft Dataframe")
         lyft_col.data_editor(lyft_df.T.reset_index().rename(columns={'index':'Column',
                                                                     0: 'Value'}),
@@ -373,12 +362,23 @@ if page == "Riders":
                     use_container_width=True,
                     disabled=['Columns', 'Value'])
         
+        uber_col.header("Uber Pricing:")
+        uber_col.data_editor(uber_pred_df.sort_values(by='Price', ascending=False),
+                            hide_index=True,
+                            use_container_width=True,
+                            disabled=uber_pred_df.columns)
+        uber_price_chart = uber_col.pyplot(fig=uber_prices_plot)
         uber_col.write("Uber Dataframe")
         uber_col.data_editor(uber_df.T.reset_index().rename(columns={'index':'Column',
                                                                     0: 'Value'}),
                     hide_index=True,
                     use_container_width=True,
                     disabled=['Columns', 'Value'])
+        
+        
+        
+        
+        
 else:  #if drivers is selected
     st.sidebar.title("Driver Information")
     driver_source = st.sidebar.selectbox(label="Pick-up",
