@@ -12,6 +12,7 @@ from datetime import datetime
 ##### Init certain variables at the beginning #####
 data = pd.read_csv('uber_lyft_file.zip')
 data_f = pd.read_parquet('data/lyft/lyft_full_data.parquet')
+q_table_all = pd.read_csv("final_qtables.csv")    
 
 now = datetime.now()
 current_hour = datetime.strptime(now.strftime("%H"), "%H")
@@ -380,12 +381,38 @@ if page == "Riders":
                     disabled=['Columns', 'Value'])
 else:  #if drivers is selected
     st.sidebar.title("Driver Information")
-    driver_time = st.sidebar.time_input(label="Pick-up Time", 
-                                        key="driver_time",
-                                        value=current_hour, 
-                                        step=60*60)
     driver_source = st.sidebar.selectbox(label="Pick-up",
                                          options=location_options,
                                          index=0,
                                          key="driver_source",
                                          placeholder="-")
+    
+    driver_time = st.sidebar.time_input(label="Pick-up Time", 
+                                        key="driver_time",
+                                        value=current_hour, 
+                                        step=60*60)
+    
+    driver_day = st.sidebar.number_input(label="Day of Month",
+                                         min_value=1,
+                                         max_value=7,
+                                         key="driver_day",
+                                         value=int(current_day.strftime("%d")),
+                                         step=1)
+    
+    driver_short_summary = st.sidebar.selectbox(label="Current Weather",
+                                                options=['Clear', 'Rain'],
+                                                index=0,
+                                                key="drive_short_summary",
+                                                placeholder="-")
+    
+    chosen_hour = int(driver_time.strftime("%H"))
+    if chosen_hour < 6:
+        chosen_hour = 6
+    elif chosen_hour > 22:
+        chosen_hour = 22
+     
+    # q_table = q_table_all.loc[(q_table_all['hour'] == int(chosen_hour)) &
+    #                           (q_table_all['day'] == int(driver_day)) &
+    #                           (q_table_all['short_summary'] == str(driver_short_summary))]
+    # q_table = q_table[['Source', 'Destination', 'Q']]
+    # Emily's plotting code
