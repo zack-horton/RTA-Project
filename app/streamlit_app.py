@@ -380,4 +380,12 @@ if page == "Riders":
                     disabled=['Columns', 'Value'])
 else:  #if drivers is selected
     st.sidebar.title("Driver Information")
-    
+    driver_time = st.sidebar.time_input(label="Pick-up Time", 
+                                        key="driver_time",
+                                        value=current_hour, 
+                                        step=60*60)
+    driver_source = st.sidebar.selectbox(label="Pick-up",
+                                         options=location_options,
+                                         index=0,
+                                         key="driver_source",
+                                         placeholder="-")
