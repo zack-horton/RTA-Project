@@ -12,3 +12,4 @@ models/uber_deep_models/*
 !models/uber_reg_models/keep.txt
 !models/uber_tree_models/keep.txt
 !models/uber_deep_models/keep.txt
+.DS_Store
