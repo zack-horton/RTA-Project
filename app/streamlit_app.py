@@ -337,13 +337,13 @@ if page == "Riders":
         if lyft_average_price <= uber_average_price:
             best_company = "Lyft"
             best_price = round(lyft_average_price, 2)
-            price_sd = round(float(lyft_pred_df_floats[['Price']].std().values[0]), 2)
+            price_sd = round(float(lyft_pred_df_floats[['Price']].std().values[0]) * 1.96, 2)
         else:
             best_company = "Uber"
             best_price = round(uber_average_price, 2)
-            price_sd = round(float(uber_pred_df_floats[['Price']].std().values[0]), 2)
+            price_sd = round(float(uber_pred_df_floats[['Price']].std().values[0]) * 1.96, 2)
             
-        st.subheader(f"Based on our predictions, you should take {best_company} and it will cost ~${best_price} (+/- {price_sd})",
+        st.subheader(f"Based on our predictions, you should take {best_company} and it will cost ${best_price} (+/- {price_sd})",
                      divider='green')
         
         
@@ -440,9 +440,9 @@ else:  #if drivers is selected
     # Function to assign color based on Q-value
     def assign_color(row, max_q_value):
         if row['Q'] == max_q_value:
-            return [255, 0, 0, 160]  # Red for the highest Q-value
+            return [0, 255, 0, 160]  # Green for the highest Q-value
         else:
-            return [0, 255, 0, 160]  # Green for other routes
+            return [255, 0, 0, 160]  # Red for other routes
 
     # Find the maximum Q-value within the filtered data
     max_q_value = filtered_data['Q'].max()
