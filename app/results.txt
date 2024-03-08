@@ -1,0 +1,39 @@
+Novemer, 17:00, Clear, Standard Ride, Friday
+
+Back Bay - BU
+    - Lyft 6.92
+    - Uber 8.11
+Back Bay - Fenway
+    - Lyft 6.74
+    - Uber 7.86
+Back Bay - Haymarket Square
+    - Lyft 9.88
+    - Uber 10.29
+Back Bay - North End
+    - Lyft 10.85
+    - Uber 10.79
+Back Bay - Northeastern Univ.
+    - Lyft 6.49
+    - Uber 7.40
+Back Bay - South Station
+    - Lyft 9.34
+    - Uber 9.12
+
+Financial District - BU
+    - Lyft 16.39
+    - Uber 16.23
+Financial District - Fenway
+    - Lyft 14.63
+    - Uber 14.07
+Financial District - Haymarket Square
+    - Lyft 6.83
+    - Uber 7.82
+Financial District - North End
+    - Lyft 6.78
+    - Uber 7.65
+Financial District - Northeastern Univ.
+    - Lyft 11.99
+    - Uber 12.18
+Financial District - South Station
+    - Lyft 5.60
+    - Uber 6.41
