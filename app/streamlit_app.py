@@ -396,7 +396,7 @@ else:  #if drivers is selected
                                          min_value=1,
                                          max_value=7,
                                          key="driver_day",
-                                         value=int(current_day.strftime("%d")),
+                                         value=1,
                                          step=1)
     
     driver_short_summary = st.sidebar.selectbox(label="Current Weather",
