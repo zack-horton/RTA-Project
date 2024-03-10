@@ -396,7 +396,7 @@ else:  #if drivers is selected
                                          min_value=1,
                                          max_value=7,
                                          key="driver_day",
-                                         value=1,
+                                         value=7,
                                          step=1)
     
     driver_short_summary = st.sidebar.selectbox(label="Current Weather",
@@ -426,11 +426,11 @@ else:  #if drivers is selected
     import pydeck as pdk
 
     # Load the data
-    final_qtables = pd.read_csv('data/data.csv')  # Make sure this is the correct path to your data file
-
+    final_qtables = pd.read_csv('data/final_q_values.csv')  # Make sure this is the correct path to your data file
+    final_qtables.drop(final_qtables[final_qtables['Q'] == 0].index, inplace=True)
     # Streamlit app starts here
     st.title('Optimal Driver Routing Plans in Boston')
-
+    print(final_qtables)
     # Filter data based on user input
     filtered_data = final_qtables[(final_qtables['hour'] == chosen_hour) & 
                                   (final_qtables['day'] == driver_day) & 
