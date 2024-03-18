@@ -34,6 +34,8 @@ destination_options = {"Back Bay": ['Boston University', 'Fenway', 'Haymarket Sq
                                     'Northeastern University', 'South Station']}
 
 
+
+
 data_list = []
 hours = [6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22]
 days = [1,2,3,4,5,6,7]
@@ -183,82 +185,50 @@ for hour in hours:
             melted_df = final_df.melt(id_vars='Source', var_name='Destination', value_name='Q')
             melted_df['hour'] = hour
             melted_df['weather'] = short_summary
+            melted_df['day'] = day
             all_q_values = pd.concat([all_q_values, melted_df], ignore_index=True)
 
 
 
 
-long_lat_dict = {
-    "Back Bay" : [42.34950,	-71.07950],
-    "Beacon Hill" : [42.35620,	-71.06940],
-    "Boston University": [42.35050,	-71.10540],
-    "Fenway" : [42.34680,	-71.09230],
-    "Financial District": [42.35590,	-71.05500],
-    "Haymarket Square": [42.36380,	-71.05850],
-    "North End": [42.36520,-71.05550],
-    "North Station": [42.36640,	-71.06200],
-    "Northeastern University": [42.33990,	-71.08990],
-    "South Station": [42.35190,	-71.05520],
-    "Theatre District": [42.35190,	-71.06430],
-    "West End": [42.36520,	-71.06410]
-}
+long_lat = [
+    {'Location': "Back Bay", 'Start_Latitude' : 42.34950, 'Start_Longitude': -71.07950},
+    {'Location': "Beacon Hill" , 'Start_Latitude': 42.35620, 'Start_Longitude':	-71.06940},
+    {'Location': "Boston University", 'Start_Latitude': 42.35050,'Start_Longitude':	-71.10540},
+    {'Location': "Fenway" , 'Start_Latitude': 42.34680,'Start_Longitude':	-71.09230},
+    {'Location': "Financial District", 'Start_Latitude': 42.35590,'Start_Longitude':	-71.05500},
+    {'Location': "Haymarket Square" , 'Start_Latitude': 42.36380,'Start_Longitude':	-71.05850},
+    {'Location': "North End", 'Start_Latitude': 42.36520,'Start_Longitude':-71.05550},
+    {'Location': "North Station", 'Start_Latitude': 42.36640,	'Start_Longitude':-71.06200},
+    {'Location': "Northeastern University", 'Start_Latitude': 42.33990,'Start_Longitude':	-71.08990},
+    {'Location': "South Station" , 'Start_Latitude': 42.35190,'Start_Longitude':	-71.05520},
+    {'Location': "Theatre District", 'Start_Latitude': 42.35190,'Start_Longitude':	-71.06430},
+    {'Location': "West End", 'Start_Latitude': 42.36520,'Start_Longitude':	-71.06410}
+]
+start_longlat_df = pd.DataFrame(long_lat)
 
-print(long_lat_dict.map('Back Bay'))
-#all_q_values.to_csv('final_q_values.csv', index=False)
+long_lat = [
+    {'Location': "Back Bay", 'End_Latitude' : 42.34950, 'End_Longitude': -71.07950},
+    {'Location': "Beacon Hill" , 'End_Latitude': 42.35620, 'End_Longitude':	-71.06940},
+    {'Location': "Boston University", 'End_Latitude': 42.35050,'End_Longitude':	-71.10540},
+    {'Location': "Fenway" , 'End_Latitude': 42.34680,'End_Longitude':	-71.09230},
+    {'Location': "Financial District", 'End_Latitude': 42.35590,'End_Longitude':	-71.05500},
+    {'Location': "Haymarket Square" , 'End_Latitude': 42.36380,'End_Longitude':	-71.05850},
+    {'Location': "North End", 'End_Latitude': 42.36520,'End_Longitude':-71.05550},
+    {'Location': "North Station", 'End_Latitude': 42.36640,	'End_Longitude':-71.06200},
+    {'Location': "Northeastern University", 'End_Latitude': 42.33990,'End_Longitude':	-71.08990},
+    {'Location': "South Station" , 'End_Latitude': 42.35190,'End_Longitude':	-71.05520},
+    {'Location': "Theatre District", 'End_Latitude': 42.35190,'End_Longitude':	-71.06430},
+    {'Location': "West End", 'End_Latitude': 42.36520,'End_Longitude':	-71.06410}
+]
+
+end_longlat_df = pd.DataFrame(long_lat)
 
 
+all_q_values = all_q_values.merge(start_longlat_df, left_on = 'Source', right_on='Location', how = 'left')
+all_q_values = all_q_values.merge(end_longlat_df, left_on = 'Destination', right_on='Location', how = 'left')
+all_q_values = all_q_values.drop(columns=['Location_x', 'Location_y'])
+#print(all_q_values)
+all_q_values.to_csv('data/final_q_values.csv', index=False)
 
 
-
-
-
-
-
-
-
-            '''
-            import pandas as pd
-            import networkx as nx
-            import matplotlib.pyplot as plt
-
-            # Assuming df is your DataFrame with 12 sources and destinations
-            # Assuming the columns represent destinations and rows represent sources
-            # Also, assuming the first column is already set as the index
-
-            # Create an empty graph
-
-            # Create an empty graph
-            G = nx.Graph()
-
-            # Add nodes (sources and destinations) to the graph
-            nodes = df.index.tolist() + df.columns.tolist()  # All sources and destinations
-            G.add_nodes_from(nodes)
-
-            # Iterate through each combination of source and destination
-            for source in df.index:
-                for destination in df.columns:
-                    # Add an edge between source and destination with weight equal to the value in the DataFrame
-                    weight = df.loc[source, destination]
-                    if not pd.isnull(weight) and weight >= 0:  # Skip if weight is NaN or less than 0
-                        G.add_edge(source, destination, weight=weight)
-
-            # Position nodes using a spring layout
-            pos = nx.spring_layout(G)
-
-            # Draw nodes
-            nx.draw_networkx_nodes(G, pos, node_size=500)
-
-            # Draw edges
-            nx.draw_networkx_edges(G, pos)
-
-            # Draw labels for edges with weights (rounded to one decimal place)
-            edge_labels = {(u, v): f"{d['weight']:.1f}" for u, v, d in G.edges(data=True) if d['weight'] >= 0}
-            nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
-
-            # Draw labels for nodes
-            nx.draw_networkx_labels(G, pos)
-
-            # Display the plot
-            plt.axis('off')
-            plt.show()
-'''
